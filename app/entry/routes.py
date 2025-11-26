@@ -14,7 +14,7 @@ typical CRUD pattern:
 
 from uuid import UUID
 
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, url_for
 from werkzeug import Response
 
 from app import db
@@ -60,3 +60,19 @@ def view(register_id: UUID, entry_id: UUID) -> str:
 
     # Render the detail page for this register
     return render_template("entry/view.html", entry=entry)
+
+@bp.route("/<uuid:entry_id>/edit", methods=["GET", "POST"])
+def edit(register_id: UUID, entry_id: UUID) -> str | Response:
+    entry = db.one_or_404(db.select(Entry).filter_by(register_id=register_id, id=entry_id))
+    form = EntryForm(register_id=register_id, obj=entry)
+
+    if request.method == "GET":
+        form.name.data = entry.name
+        
+    elif form.validate_on_submit():
+        entry.name = form.name.data
+        db.session.commit()
+        flash("Successfully updated entry", "success")
+        return redirect(url_for("register.entry.view", register_id=register_id, entry_id=entry.id))
+
+    return render_template("entry/edit.html", form=form, entry=entry)
