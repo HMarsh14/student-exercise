@@ -209,9 +209,12 @@ class Driver:
 
         self._find_and_click(By.NAME, "submit")
 
-    def confirm_entry_updated(self, old_name, new_name):
+    def confirm_entry_updated(self, register, old_name, new_name):
         updated_message = self.browser.find_element(By.XPATH, "//*[contains(text(),'Successfully updated entry')]")
         assert updated_message is not None, "Updated message not found"
+
+        self._navigate_to_registers()
+        self._view_register(register)
 
         try:
             self.browser.find_element(By.XPATH, f"//*[contains(text(), '{old_name}')]")

@@ -114,4 +114,4 @@ class Dsl:
         register_alias = self._decode_alias(register)
         old_name_alias = self._decode_alias(old_name)
         new_name_alias = self._decode_alias(new_name)
-        self.driver.confirm_entry_updated(register_alias, old_name_alias, new_name_alias)
+        self.driver.confirm_entry_updated(register=register_alias, old_name=old_name_alias, new_name=new_name_alias)
