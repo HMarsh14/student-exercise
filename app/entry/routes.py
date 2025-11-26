@@ -60,33 +60,3 @@ def view(register_id: UUID, entry_id: UUID) -> str:
 
     # Render the detail page for this register
     return render_template("entry/view.html", entry=entry)
-
-
-@bp.route("/<uuid:entry_id>/edit", methods=["GET", "POST"])
-def edit(register_id: UUID, entry_id: UUID) -> str | Response:
-    """
-    Edit an existing Entry by its UUID.
-
-    Parameters:
-    - register_id (UUID): The unique identifier of the Register
-    - entry_id (UUID): The unique identifier of the Entry
-
-    Returns:
-    - str | Response: Rendered HTML page for editing the entry or redirect response after successful edit
-    """
-    # Fetch the entry or return a 404 page if it does not exist
-    entry = db.one_or_404(db.select(Entry).filter_by(register_id=register_id, id=entry_id))
-
-    form = EntryForm(register_id=register_id, obj=entry)
-
-    # Flask-WTF handles form validation and CSRF protection for us.
-    if form.validate_on_submit():
-        form.populate_obj(entry)
-        db.session.commit()
-        flash("Successfully updated entry in register", "success")
-
-        # Redirect to follow the Post/Redirect/Get (PRG) pattern
-        return redirect(url_for("register.view", register_id=register_id))
-
-    # Render the form for GET requests or if validation fails
-    return render_template("entry/edit.html", form=form, entry=entry)
