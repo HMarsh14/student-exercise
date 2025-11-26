@@ -61,6 +61,7 @@ def view(register_id: UUID, entry_id: UUID) -> str:
     # Render the detail page for this register
     return render_template("entry/view.html", entry=entry)
 
+
 @bp.route("/<uuid:entry_id>/edit", methods=["GET", "POST"])
 def edit(register_id: UUID, entry_id: UUID) -> str | Response:
     entry = db.one_or_404(db.select(Entry).filter_by(register_id=register_id, id=entry_id))
@@ -68,7 +69,7 @@ def edit(register_id: UUID, entry_id: UUID) -> str | Response:
 
     if request.method == "GET":
         form.name.data = entry.name
-        
+
     elif form.validate_on_submit():
         entry.name = form.name.data
         db.session.commit()
