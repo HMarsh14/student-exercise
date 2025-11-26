@@ -19,7 +19,7 @@ from werkzeug import Response
 
 from app import db
 from app.entry import bp
-from app.entry.forms import EntryForm
+from app.entry.forms import EntryDeleteForm, EntryForm
 from app.models import Entry
 
 
@@ -77,3 +77,17 @@ def edit(register_id: UUID, entry_id: UUID) -> str | Response:
         return redirect(url_for("register.entry.view", register_id=register_id, entry_id=entry.id))
 
     return render_template("entry/edit.html", form=form, entry=entry)
+
+
+@bp.route("/<uuid:entry_id>/delete", methods=["GET", "POST"])
+def delete(register_id: UUID, entry_id: UUID) -> str | Response:
+    entry = db.one_or_404(db.select(Entry).filter_by(register_id=register_id, id=entry_id))
+    form = EntryDeleteForm(entry_id=entry_id)
+
+    if form.validate_on_submit():
+        db.session.delete(entry)
+        db.session.commit()
+        flash("Successfully deleted entry", "success")
+        return redirect(url_for("register.view", register_id=register_id))
+
+    return render_template("entry/delete.html", form=form, entry=entry)
