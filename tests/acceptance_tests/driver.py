@@ -269,3 +269,9 @@ class Driver:
             raise AssertionError("Deleted entry still exists")
         except NoSuchElementException:
             pass
+
+    def confirm_cannot_delete_register_with_entries(self, name):
+        error_message = self.browser.find_element(
+            By.XPATH, "//*[contains(text(),'Cannot delete register with existing entries')]"
+        )
+        assert error_message is not None, "Error message not found"

@@ -147,3 +147,7 @@ class Dsl:
         register_alias = self._decode_alias(register)
         entry_name_alias = self._decode_alias(entry_name)
         self.driver.confirm_entry_deleted(register_alias, entry_name_alias)
+
+    def confirm_cannot_delete_register_with_entries(self, name=DEFAULT_REGISTER_NAME):
+        alias = self._decode_alias(name)
+        self.driver.confirm_cannot_delete_register_with_entries(alias)
